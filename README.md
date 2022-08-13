@@ -10,6 +10,20 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 > 1) FlightSuretyData.sol for data persistence
 > 2) FlightSuretyApp.sol for app logic and oracles code
 
+- Move `flights` and other variables from `App` to `Data` contract. This way, if there is a bug in the logic, we just need to replace the `App` contract while the `Data` contract will keep the same data, avoiding expensive data migration costs. The `App` can request data from `Data` but not the opposite.
+- Add `Data` interface to `App`.
+- Add state variable referencing `Data` contract in `App`.
+- Add `Data` contract address parameter to `App` constructor.
+- Initialize state variable referencing `Data` contract in `App`.
+
+Move logic functions from `Data` to `App`. Change the visibility from `internal` to `external`. Remove modifiers, if necessary.
+Prefix methods with `Data` state variable.
+
+
+
+
+
+
 ### Dapp Created and Used for Contract Calls
 
 > A Dapp client has been created and is used for triggering contract calls. Client can be launched with “npm run dapp” and is available at http://localhost:8000
