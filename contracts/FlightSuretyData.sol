@@ -30,7 +30,7 @@ contract FlightSuretyData {
      * @dev Constructor
      *      The deploying account becomes contractOwner
      */
-    constructor() public {
+    constructor(address dataContract) public {
         contractOwner = msg.sender;
     }
 
