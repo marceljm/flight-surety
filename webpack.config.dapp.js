@@ -2,7 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  target: "node",
+  target: "web",
   entry: ['babel-polyfill', path.join(__dirname, "src/dapp")],
   output: {
     path: path.join(__dirname, "prod/dapp"),
@@ -35,10 +35,19 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src/dapp/index.html")
-    })
+    }),
   ],
   resolve: {
-    extensions: [".js", ".json"]
+    extensions: [".js", ".json"],
+    fallback: {
+      "assert": false,
+      "buffer": false,
+      "crypto": false,
+      "http": false,
+      "https": false,
+      "stream": false,
+      "url": false
+    }
   },
   devServer: {
     // contentBase
