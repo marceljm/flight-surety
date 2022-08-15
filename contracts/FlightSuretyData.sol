@@ -22,6 +22,15 @@ contract FlightSuretyData {
 
     mapping(bytes32 => Flight) private flights;
 
+    mapping(address => uint256) private authorizedCallers;
+
+    struct Airline {
+        uint256 funds;
+    }
+
+    mapping(address => Airline) private airlines;
+    mapping(address => bool) private registeredAirlines;
+
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
@@ -32,6 +41,11 @@ contract FlightSuretyData {
      */
     constructor(address dataContract) public {
         contractOwner = msg.sender;
+
+        // Airline Contract Initialization: First airline is registered when contract is deployed
+        airlines[dataContract] = Airline({funds: 0});
+
+        registeredAirlines[dataContract] = true;
     }
 
     /********************************************************************************************/
@@ -59,6 +73,11 @@ contract FlightSuretyData {
         _;
     }
 
+    modifier requireAirlineFunds(address airline) {
+        require(airlines[airline].funds > 0, "Airline is not funded");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -81,6 +100,24 @@ contract FlightSuretyData {
         operational = mode;
     }
 
+    function authorizeCaller(address contractAddress)
+        external
+        requireContractOwner
+    {
+        authorizedCallers[contractAddress] = 1;
+    }
+
+    function deauthorizeCaller(address contractAddress)
+        external
+        requireContractOwner
+    {
+        delete authorizedCallers[contractAddress];
+    }
+
+    function isAirline(address airline) external view returns (bool) {
+        return registeredAirlines[airline];
+    }
+
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
@@ -90,7 +127,13 @@ contract FlightSuretyData {
      *      Can only be called from FlightSuretyApp contract
      *
      */
-    function registerAirline() external pure {}
+    function registerAirline(address airline)
+        external
+        requireIsOperational
+        requireAirlineFunds(airline)
+    {
+        registeredAirlines[airline] = true;
+    }
 
     /**
      * @dev Buy insurance for a flight
@@ -114,7 +157,10 @@ contract FlightSuretyData {
      *      resulting in insurance payouts, the contract should be self-sustaining
      *
      */
-    function fund() public payable {}
+    function fund() public payable requireIsOperational {
+        uint256 funds = airlines[msg.sender].funds;
+        airlines[msg.sender].funds = funds.add(msg.value);
+    }
 
     function getFlightKey(
         address airline,

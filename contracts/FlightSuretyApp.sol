@@ -84,11 +84,11 @@ contract FlightSuretyApp {
      * @dev Add an airline to the registration queue
      *
      */
-    function registerAirline()
+    function registerAirline(address airline)
         external
-        pure
         returns (bool success, uint256 votes)
     {
+        flightSuretyData.registerAirline(airline);
         return (success, 0);
     }
 
@@ -253,7 +253,10 @@ contract FlightSuretyApp {
     }
 
     // Returns array of three non-duplicating integers from 0-9
-    function generateIndexes(address account) internal returns (uint8[3] memory) {
+    function generateIndexes(address account)
+        internal
+        returns (uint8[3] memory)
+    {
         uint8[3] memory indexes;
         indexes[0] = getRandomIndex(account);
 
@@ -293,6 +296,6 @@ contract FlightSuretyApp {
     // endregion
 }
 
-contract FlightSuretyData {
-    // methods
+abstract contract FlightSuretyData {
+    function registerAirline(address airline) external virtual;
 }

@@ -49,6 +49,8 @@ Prefix methods with `Data` state variable.
 
 > First airline is registered when contract is deployed.
 
+:white_check_mark:
+
 ### Multiparty Consensus
 
 > Only existing airline may register a new airline until there are at least four airlines registered
