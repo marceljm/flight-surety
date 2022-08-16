@@ -15,14 +15,10 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 - Add state variable referencing `Data` contract in `App`.
 - Add `Data` contract address parameter to `App` constructor.
 - Initialize state variable referencing `Data` contract in `App`.
+- Move logic functions from `Data` to `App`. 
+- Change the visibility from `internal` to `external`.
 
-Move logic functions from `Data` to `App`. Change the visibility from `internal` to `external`. Remove modifiers, if necessary.
-Prefix methods with `Data` state variable.
-
-
-
-
-
+:white_check_mark:
 
 ### Dapp Created and Used for Contract Calls
 
@@ -38,6 +34,8 @@ Prefix methods with `Data` state variable.
 ### Operational status control is implemented in contracts
 
 > Students has implemented operational status control.
+
+:white_check_mark:
 
 ### Fail Fast Contract
 

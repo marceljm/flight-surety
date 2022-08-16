@@ -10,7 +10,7 @@ contract FlightSuretyData {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
-    address private contractOwner; // Account used to deploy contract
+    address payable private contractOwner; // Account used to deploy contract
     bool private operational = true; // Blocks all state changes throughout the contract if false
 
     struct Flight {
@@ -40,7 +40,7 @@ contract FlightSuretyData {
      *      The deploying account becomes contractOwner
      */
     constructor(address dataContract) public {
-        contractOwner = msg.sender;
+        contractOwner = payable(msg.sender);
 
         // Airline Contract Initialization: First airline is registered when contract is deployed
         airlines[dataContract] = Airline({funds: 0});
