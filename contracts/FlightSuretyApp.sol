@@ -88,7 +88,7 @@ contract FlightSuretyApp {
         external
         returns (bool success, uint256 votes)
     {
-        flightSuretyData.registerAirline(airline);
+        flightSuretyData.registerAirline(airline, msg.sender);
         return (success, 0);
     }
 
@@ -297,5 +297,5 @@ contract FlightSuretyApp {
 }
 
 abstract contract FlightSuretyData {
-    function registerAirline(address airline) external virtual;
+    function registerAirline(address airline, address sender) external virtual;
 }

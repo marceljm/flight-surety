@@ -54,6 +54,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 > Only existing airline may register a new airline until there are at least four airlines registered
 > Demonstrated either with Truffle test or by making call from client Dapp
 
+:white_check_mark:
+
 ### Multiparty Consensus
 
 > Registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines

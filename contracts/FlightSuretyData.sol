@@ -28,8 +28,10 @@ contract FlightSuretyData {
         uint256 funds;
     }
 
+    address firstAirline;
     mapping(address => Airline) private airlines;
     mapping(address => bool) private registeredAirlines;
+    uint8 private numberOfRegisteredAirlines;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -46,6 +48,8 @@ contract FlightSuretyData {
         airlines[dataContract] = Airline({funds: 0});
 
         registeredAirlines[dataContract] = true;
+        numberOfRegisteredAirlines = 1;
+        firstAirline = dataContract;
     }
 
     /********************************************************************************************/
@@ -75,6 +79,14 @@ contract FlightSuretyData {
 
     modifier requireAirlineFunds(address airline) {
         require(airlines[airline].funds > 0, "Airline is not funded");
+        _;
+    }
+
+    modifier requireAtLeast3Airlines(address sender) {
+        require(
+            sender == firstAirline || numberOfRegisteredAirlines > 3,
+            "Only existing airline may register a new airline until there are at least four airlines registered"
+        );
         _;
     }
 
@@ -127,12 +139,14 @@ contract FlightSuretyData {
      *      Can only be called from FlightSuretyApp contract
      *
      */
-    function registerAirline(address airline)
+    function registerAirline(address airline, address sender)
         external
         requireIsOperational
         requireAirlineFunds(airline)
+        requireAtLeast3Airlines(sender)
     {
         registeredAirlines[airline] = true;
+        numberOfRegisteredAirlines += 1;
     }
 
     /**
