@@ -5,18 +5,18 @@ var Test = require('../config/testConfig.js');
 contract('Oracles', async (accounts) => {
 
     const TEST_ORACLES_COUNT = 20;
+
+    // Watch contract events
+    const STATUS_CODE_UNKNOWN = 0;
+    const STATUS_CODE_ON_TIME = 10;
+    const STATUS_CODE_LATE_AIRLINE = 20;
+    const STATUS_CODE_LATE_WEATHER = 30;
+    const STATUS_CODE_LATE_TECHNICAL = 40;
+    const STATUS_CODE_LATE_OTHER = 50;
+
     var config;
     before('setup contract', async () => {
         config = await Test.Config(accounts);
-
-        // Watch contract events
-        const STATUS_CODE_UNKNOWN = 0;
-        const STATUS_CODE_ON_TIME = 10;
-        const STATUS_CODE_LATE_AIRLINE = 20;
-        const STATUS_CODE_LATE_WEATHER = 30;
-        const STATUS_CODE_LATE_TECHNICAL = 40;
-        const STATUS_CODE_LATE_OTHER = 50;
-
     });
 
 
@@ -51,12 +51,13 @@ contract('Oracles', async (accounts) => {
 
             // Get oracle information
             let oracleIndexes = await config.flightSuretyApp.getMyIndexes.call({ from: accounts[a] });
+
             for (let idx = 0; idx < 3; idx++) {
 
                 try {
                     // Submit a response...it will only be accepted if there is an Index match
                     await config.flightSuretyApp.submitOracleResponse(oracleIndexes[idx], config.firstAirline, flight, timestamp, STATUS_CODE_ON_TIME, { from: accounts[a] });
-
+                    console.log('\nOK');
                 }
                 catch (e) {
                     // Enable this when debugging
