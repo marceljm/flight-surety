@@ -41,6 +41,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 > Contract functions “fail fast” by having a majority of “require()” calls at the beginning of function body
 
+:white_check_mark:
+
 ## Airlines
 
 ### Airline Contract Initialization
@@ -60,6 +62,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 > Registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines
 > Demonstrated either with Truffle test or by making call from client Dapp
+
+:white_check_mark:
 
 ### Airline Ante
 

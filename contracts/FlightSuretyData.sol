@@ -32,6 +32,7 @@ contract FlightSuretyData {
     mapping(address => Airline) private airlines;
     mapping(address => bool) private registeredAirlines;
     uint8 private numberOfRegisteredAirlines;
+    mapping(address => address[]) private votes;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -90,6 +91,15 @@ contract FlightSuretyData {
         _;
     }
 
+    modifier requireConsensus(address airline) {
+        require(
+            numberOfRegisteredAirlines < 5 ||
+                votes[airline].length >= numberOfRegisteredAirlines / 2,
+            "Registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines"
+        );
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -144,9 +154,17 @@ contract FlightSuretyData {
         requireIsOperational
         requireAirlineFunds(airline)
         requireAtLeast3Airlines(sender)
+        requireConsensus(airline)
     {
         registeredAirlines[airline] = true;
         numberOfRegisteredAirlines += 1;
+    }
+
+    function registerVote(address airline, address sender)
+        external
+        requireIsOperational
+    {
+        votes[airline].push(sender);
     }
 
     /**

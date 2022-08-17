@@ -145,21 +145,37 @@ contract('Flight Surety Tests', async (accounts) => {
     it('(airline) other airlines may register when there are at least 3 airlines registered', async () => {
         try {
             // registered by the first airline
-            await config.flightSuretyData.fund({ from: accounts[3], value: web3.utils.toWei("10", "ether") });
-            await config.flightSuretyApp.registerAirline(accounts[3], { from: config.firstAirline });
             await config.flightSuretyData.fund({ from: accounts[4], value: web3.utils.toWei("10", "ether") });
             await config.flightSuretyApp.registerAirline(accounts[4], { from: config.firstAirline });
+            await config.flightSuretyData.fund({ from: accounts[5], value: web3.utils.toWei("10", "ether") });
+            await config.flightSuretyApp.registerAirline(accounts[5], { from: config.firstAirline });
 
             // registered by the third airline
-            await config.flightSuretyData.fund({ from: accounts[5], value: web3.utils.toWei("10", "ether") });
-            await config.flightSuretyApp.registerAirline(accounts[5], { from: accounts[3]});
+            await config.flightSuretyData.fund({ from: accounts[6], value: web3.utils.toWei("10", "ether") });
+            await config.flightSuretyApp.registerAirline(accounts[6], { from: accounts[3] });
         }
         catch (e) {
-
+            console.log(e);
         }
-        let result = await config.flightSuretyData.isAirline.call(accounts[5]);
+        let result = await config.flightSuretyData.isAirline.call(accounts[6]);
 
         assert.equal(result, true, "At least 3 airlines should be registered.");
+    });
+
+    it('(airline) registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines', async () => {
+        try {
+            // 3 votes
+            for (i = 1; i <= 3; i++)
+                await config.flightSuretyApp.registerVote(accounts[7], { from: accounts[i] });
+
+            await config.flightSuretyData.fund({ from: accounts[7], value: web3.utils.toWei("10", "ether") });
+            await config.flightSuretyApp.registerAirline(accounts[7], { from: config.firstAirline });
+        }
+        catch (e) {
+            console.log(e);
+        }
+        let result = await config.flightSuretyData.isAirline.call(accounts[7]);
+        assert.equal(result, true, "Registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines.");
     });
 
 });

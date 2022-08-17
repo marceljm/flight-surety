@@ -92,6 +92,10 @@ contract FlightSuretyApp {
         return (success, 0);
     }
 
+    function registerVote(address airline) external {
+        flightSuretyData.registerVote(airline, msg.sender);
+    }
+
     /**
      * @dev Register a future flight for insuring.
      *
@@ -298,4 +302,6 @@ contract FlightSuretyApp {
 
 abstract contract FlightSuretyData {
     function registerAirline(address airline, address sender) external virtual;
+
+    function registerVote(address airline, address sender) external virtual;
 }
