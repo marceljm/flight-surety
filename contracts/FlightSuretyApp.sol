@@ -29,6 +29,10 @@ contract FlightSuretyApp {
 
     address private contractOwner; // Account used to deploy contract
 
+    uint256 private constant REQUIRED_FUNDS = 10 ether;
+    uint8 private constant REQUIRED_CONSENSUS = 50;
+    uint8 private constant REQUIRED_AIRLINES = 4;
+
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
     /********************************************************************************************/
@@ -88,12 +92,12 @@ contract FlightSuretyApp {
         external
         returns (bool success, uint256 votes)
     {
-        flightSuretyData.registerAirline(airline, msg.sender);
+        flightSuretyData.registerAirline(airline, msg.sender, REQUIRED_CONSENSUS, REQUIRED_AIRLINES);
         return (success, 0);
     }
 
     function registerVote(address airline) external {
-        flightSuretyData.registerVote(airline, msg.sender);
+        flightSuretyData.registerVote(airline, msg.sender, REQUIRED_FUNDS);
     }
 
     /**
@@ -301,7 +305,7 @@ contract FlightSuretyApp {
 }
 
 abstract contract FlightSuretyData {
-    function registerAirline(address airline, address sender) external virtual;
+    function registerAirline(address airline, address sender, uint8 requiredConsensus, uint8 requiredAirlines) external virtual;
 
-    function registerVote(address airline, address sender) external virtual;
+    function registerVote(address airline, address sender, uint256 requiredFunds) external virtual;
 }

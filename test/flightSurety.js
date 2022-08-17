@@ -178,4 +178,34 @@ contract('Flight Surety Tests', async (accounts) => {
         assert.equal(result, true, "Registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines.");
     });
 
+    it('(airline) does not participate in contract until it submits funding of 10 ether (make sure it is not 10 wei)', async () => {
+        try {
+            // votes
+            for (i = 1; i <= 7; i++) {
+                await config.flightSuretyApp.registerVote(accounts[8], { from: accounts[i] });
+                await config.flightSuretyApp.registerVote(accounts[9], { from: accounts[i] });
+                await config.flightSuretyApp.registerVote(accounts[10], { from: accounts[i] });
+            }
+
+            // register
+            await config.flightSuretyData.fund({ from: accounts[8], value: web3.utils.toWei("5", "ether") });
+            await config.flightSuretyApp.registerAirline(accounts[8], { from: config.firstAirline });
+            await config.flightSuretyData.fund({ from: accounts[9], value: web3.utils.toWei("5", "ether") });
+            await config.flightSuretyApp.registerAirline(accounts[9], { from: config.firstAirline });
+            await config.flightSuretyData.fund({ from: accounts[10], value: web3.utils.toWei("5", "ether") });
+            await config.flightSuretyApp.registerAirline(accounts[10], { from: config.firstAirline });
+
+            // votes
+            for (i = 7; i <= 10; i++)
+                await config.flightSuretyApp.registerVote(accounts[11], { from: accounts[i] });
+
+            await config.flightSuretyData.fund({ from: accounts[11], value: web3.utils.toWei("10", "ether") });
+            await config.flightSuretyApp.registerAirline(accounts[11], { from: config.firstAirline });
+        }
+        catch (e) {
+        }
+        let result = await config.flightSuretyData.isAirline.call(accounts[11]);
+        assert.equal(result, false, "Does not participate in contract until it submits funding of 10 ether (make sure it is not 10 wei)");
+    });
+
 });

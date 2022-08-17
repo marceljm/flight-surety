@@ -31,7 +31,7 @@ contract FlightSuretyData {
     address firstAirline;
     mapping(address => Airline) private airlines;
     mapping(address => bool) private registeredAirlines;
-    uint8 private numberOfRegisteredAirlines;
+    uint256 private numberOfRegisteredAirlines;
     mapping(address => address[]) private votes;
 
     /********************************************************************************************/
@@ -83,19 +83,27 @@ contract FlightSuretyData {
         _;
     }
 
-    modifier requireAtLeast3Airlines(address sender) {
+    modifier requireAirlines(address sender, uint8 requiredAirlines) {
         require(
-            sender == firstAirline || numberOfRegisteredAirlines > 3,
+            sender == firstAirline || numberOfRegisteredAirlines >= requiredAirlines,
             "Only existing airline may register a new airline until there are at least four airlines registered"
         );
         _;
     }
 
-    modifier requireConsensus(address airline) {
+    modifier requireConsensus(address airline, uint8 requiredConsensus, uint8 requiredAirlines) {
         require(
-            numberOfRegisteredAirlines < 5 ||
-                votes[airline].length >= numberOfRegisteredAirlines / 2,
+            numberOfRegisteredAirlines <= requiredAirlines ||
+                votes[airline].length >= numberOfRegisteredAirlines.mul(requiredConsensus).div(100),
             "Registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines"
+        );
+        _;
+    }
+
+    modifier requireEnoughFunds(address sender, uint256 requiredFunds) {
+        require(
+            airlines[sender].funds >= requiredFunds,
+            "Airline does not participate in contract until it submits funding of 10 ether"
         );
         _;
     }
@@ -149,20 +157,21 @@ contract FlightSuretyData {
      *      Can only be called from FlightSuretyApp contract
      *
      */
-    function registerAirline(address airline, address sender)
+    function registerAirline(address airline, address sender, uint8 requiredConsensus, uint8 requiredAirlines)
         external
         requireIsOperational
         requireAirlineFunds(airline)
-        requireAtLeast3Airlines(sender)
-        requireConsensus(airline)
+        requireAirlines(sender, requiredAirlines)
+        requireConsensus(airline, requiredConsensus, requiredAirlines)
     {
         registeredAirlines[airline] = true;
         numberOfRegisteredAirlines += 1;
     }
 
-    function registerVote(address airline, address sender)
+    function registerVote(address airline, address sender, uint256 requiredFunds)
         external
         requireIsOperational
+        requireEnoughFunds(sender, requiredFunds)
     {
         votes[airline].push(sender);
     }
