@@ -85,16 +85,22 @@ contract FlightSuretyData {
 
     modifier requireAirlines(address sender, uint8 requiredAirlines) {
         require(
-            sender == firstAirline || numberOfRegisteredAirlines >= requiredAirlines,
+            sender == firstAirline ||
+                numberOfRegisteredAirlines >= requiredAirlines,
             "Only existing airline may register a new airline until there are at least four airlines registered"
         );
         _;
     }
 
-    modifier requireConsensus(address airline, uint8 requiredConsensus, uint8 requiredAirlines) {
+    modifier requireConsensus(
+        address airline,
+        uint8 requiredConsensus,
+        uint8 requiredAirlines
+    ) {
         require(
             numberOfRegisteredAirlines <= requiredAirlines ||
-                votes[airline].length >= numberOfRegisteredAirlines.mul(requiredConsensus).div(100),
+                votes[airline].length >=
+                numberOfRegisteredAirlines.mul(requiredConsensus).div(100),
             "Registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines"
         );
         _;
@@ -148,6 +154,11 @@ contract FlightSuretyData {
         return registeredAirlines[airline];
     }
 
+    function isFlight(address airline, string memory flight, uint256 timestamp) external view returns (bool) {
+        bytes32 key = getFlightKey(airline, flight, timestamp);
+        return flights[key].isRegistered;
+    }
+
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
@@ -157,7 +168,12 @@ contract FlightSuretyData {
      *      Can only be called from FlightSuretyApp contract
      *
      */
-    function registerAirline(address airline, address sender, uint8 requiredConsensus, uint8 requiredAirlines)
+    function registerAirline(
+        address airline,
+        address sender,
+        uint8 requiredConsensus,
+        uint8 requiredAirlines
+    )
         external
         requireIsOperational
         requireAirlineFunds(airline)
@@ -168,12 +184,21 @@ contract FlightSuretyData {
         numberOfRegisteredAirlines += 1;
     }
 
-    function registerVote(address airline, address sender, uint256 requiredFunds)
-        external
-        requireIsOperational
-        requireEnoughFunds(sender, requiredFunds)
-    {
+    function registerVote(
+        address airline,
+        address sender,
+        uint256 requiredFunds
+    ) external requireIsOperational requireEnoughFunds(sender, requiredFunds) {
         votes[airline].push(sender);
+    }
+
+    function registerFlight(
+        address airline,
+        string memory flight,
+        uint256 timestamp
+    ) external requireIsOperational {
+        bytes32 key = getFlightKey(airline, flight, timestamp);
+        flights[key] = Flight(true, 0, timestamp, airline);
     }
 
     /**

@@ -31,6 +31,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 > A server app has been created for simulating oracle behavior. Server can be launched with “npm run server”
 
+:white_check_mark:
+
 ### Operational status control is implemented in contracts
 
 > Students has implemented operational status control.
@@ -69,6 +71,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 > Airline can be registered, but does not participate in contract until it submits funding of 10 ether (make sure it is not 10 wei)
 > Demonstrated either with Truffle test or by making call from client Dapp
+
+:white_check_mark:
 
 ## Passengers
 
@@ -117,7 +121,7 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 
 
-# ################################################################3
+# #######################################
 
 ## Install
 

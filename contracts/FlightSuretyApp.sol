@@ -92,7 +92,12 @@ contract FlightSuretyApp {
         external
         returns (bool success, uint256 votes)
     {
-        flightSuretyData.registerAirline(airline, msg.sender, REQUIRED_CONSENSUS, REQUIRED_AIRLINES);
+        flightSuretyData.registerAirline(
+            airline,
+            msg.sender,
+            REQUIRED_CONSENSUS,
+            REQUIRED_AIRLINES
+        );
         return (success, 0);
     }
 
@@ -104,7 +109,13 @@ contract FlightSuretyApp {
      * @dev Register a future flight for insuring.
      *
      */
-    function registerFlight() external pure {}
+    function registerFlight(
+        address airline,
+        string memory flight,
+        uint256 timestamp
+    ) external {
+        flightSuretyData.registerFlight(airline, flight, timestamp);
+    }
 
     /**
      * @dev Called after oracle has updated flight status
@@ -305,7 +316,22 @@ contract FlightSuretyApp {
 }
 
 abstract contract FlightSuretyData {
-    function registerAirline(address airline, address sender, uint8 requiredConsensus, uint8 requiredAirlines) external virtual;
+    function registerAirline(
+        address airline,
+        address sender,
+        uint8 requiredConsensus,
+        uint8 requiredAirlines
+    ) external virtual;
 
-    function registerVote(address airline, address sender, uint256 requiredFunds) external virtual;
+    function registerVote(
+        address airline,
+        address sender,
+        uint256 requiredFunds
+    ) external virtual;
+
+    function registerFlight(
+        address airline,
+        string memory flight,
+        uint256 timestamp
+    ) external virtual;
 }
