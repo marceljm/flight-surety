@@ -35,6 +35,13 @@ contract FlightSuretyData {
     uint256 private numberOfRegisteredAirlines;
     mapping(address => address[]) private votes;
 
+    struct Insurance {
+        address passenger;
+        address airline;
+        bytes32 flight;
+        uint256 price;
+    }
+
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/

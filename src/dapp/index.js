@@ -25,6 +25,11 @@ import './flightsurety.css';
             });
         })
 
+        jQuery('#passengers').append(`<option value=""></option>`);
+        for (let i = 0; i < 5; i++) {
+            jQuery('#passengers').append(`<option value="${contract.passengers[i]}">${contract.passengersNames[i]}</option>`);
+        }
+
         jQuery('#airlines').append(`<option value=""></option>`);
         for (let i = 0; i < 5; i++) {
             jQuery('#airlines').append(`<option value="${contract.airlines[i]}">${contract.airlinesNames[i]}</option>`);
