@@ -24,9 +24,22 @@ import './flightsurety.css';
                 display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
             });
         })
-    
-    });
-    
+
+        jQuery('#airlines').append(`<option value=""></option>`);
+        for (let i = 0; i < 5; i++) {
+            jQuery('#airlines').append(`<option value="${contract.airlines[i]}">${contract.airlinesNames[i]}</option>`);
+        }
+
+        jQuery('#airlines').on('change', function() {
+            let airline = jQuery('#airlines :selected').text();
+            jQuery('#flights').empty();
+            for (const flight of contract.airlineFlight[airline]) {
+                let city = flight[0];
+                let code = flight[1];
+                jQuery('#flights').append(`<option value="${code}">${city} (${code})</option>`);
+            }
+        });
+    });    
 
 })();
 
@@ -45,10 +58,5 @@ function display(title, description, results) {
     displayDiv.append(section);
 
 }
-
-
-
-
-
 
 

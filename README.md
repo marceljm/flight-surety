@@ -7,7 +7,9 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 ### Smart Contract Seperation
 
 > Smart Contract code is separated into multiple contracts:
+
 > 1) FlightSuretyData.sol for data persistence
+
 > 2) FlightSuretyApp.sol for app logic and oracles code
 
 - Move `flights` and other variables from `App` to `Data` contract. This way, if there is a bug in the logic, we just need to replace the `App` contract while the `Data` contract will keep the same data, avoiding expensive data migration costs. The `App` can request data from `Data` but not the opposite.
@@ -23,8 +25,11 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 ### Dapp Created and Used for Contract Calls
 
 > A Dapp client has been created and is used for triggering contract calls. Client can be launched with “npm run dapp” and is available at http://localhost:8000
+
 > Specific contract calls:
+
 > 1) Passenger can purchase insurance for flight
+
 > 2) Trigger contract to request flight status update
 
 ### Oracle Server Application
@@ -56,6 +61,7 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 ### Multiparty Consensus
 
 > Only existing airline may register a new airline until there are at least four airlines registered
+
 > Demonstrated either with Truffle test or by making call from client Dapp
 
 :white_check_mark:
@@ -63,6 +69,7 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 ### Multiparty Consensus
 
 > Registration of fifth and subsequent airlines requires multi-party consensus of 50% of registered airlines
+
 > Demonstrated either with Truffle test or by making call from client Dapp
 
 :white_check_mark:
@@ -70,6 +77,7 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 ### Airline Ante
 
 > Airline can be registered, but does not participate in contract until it submits funding of 10 ether (make sure it is not 10 wei)
+
 > Demonstrated either with Truffle test or by making call from client Dapp
 
 :white_check_mark:
@@ -79,9 +87,13 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 ### Passenger Airline Choice
 
 > Passengers can choose from a fixed list of flight numbers and departures that are defined in the Dapp client 
+
 > Your UI implementation should include:
+
 > Fields for Airline Address and Airline Name
+
 > Amount of funds to send/which airline to send to
+
 > Ability to purchase flight insurance for no more than 1 ether
 
 ### Passenger Payment

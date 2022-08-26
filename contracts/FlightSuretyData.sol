@@ -26,6 +26,7 @@ contract FlightSuretyData {
 
     struct Airline {
         uint256 funds;
+        string name;
     }
 
     address firstAirline;
@@ -46,7 +47,7 @@ contract FlightSuretyData {
         contractOwner = payable(msg.sender);
 
         // Airline Contract Initialization: First airline is registered when contract is deployed
-        airlines[dataContract] = Airline({funds: 0});
+        airlines[dataContract] = Airline({name: 'Owner', funds: 0});
 
         registeredAirlines[dataContract] = true;
         numberOfRegisteredAirlines = 1;
@@ -170,6 +171,7 @@ contract FlightSuretyData {
      */
     function registerAirline(
         address airline,
+        string memory name,
         address sender,
         uint8 requiredConsensus,
         uint8 requiredAirlines

@@ -88,12 +88,13 @@ contract FlightSuretyApp {
      * @dev Add an airline to the registration queue
      *
      */
-    function registerAirline(address airline)
+    function registerAirline(address airline, string memory name)
         external
         returns (bool success, uint256 votes)
     {
         flightSuretyData.registerAirline(
             airline,
+            name,
             msg.sender,
             REQUIRED_CONSENSUS,
             REQUIRED_AIRLINES
@@ -318,6 +319,7 @@ contract FlightSuretyApp {
 abstract contract FlightSuretyData {
     function registerAirline(
         address airline,
+        string memory name,
         address sender,
         uint8 requiredConsensus,
         uint8 requiredAirlines
