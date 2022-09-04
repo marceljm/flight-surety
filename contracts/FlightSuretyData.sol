@@ -37,10 +37,11 @@ contract FlightSuretyData {
 
     struct Insurance {
         address passenger;
-        address airline;
-        bytes32 flight;
         uint256 price;
     }
+
+    // flight key => array of insurances
+    mapping(bytes32 => Insurance[]) private insurances;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -54,7 +55,7 @@ contract FlightSuretyData {
         contractOwner = payable(msg.sender);
 
         // Airline Contract Initialization: First airline is registered when contract is deployed
-        airlines[dataContract] = Airline({name: 'Owner', funds: 0});
+        airlines[dataContract] = Airline({name: "Owner", funds: 0});
 
         registeredAirlines[dataContract] = true;
         numberOfRegisteredAirlines = 1;
@@ -162,7 +163,11 @@ contract FlightSuretyData {
         return registeredAirlines[airline];
     }
 
-    function isFlight(address airline, string memory flight, uint256 timestamp) external view returns (bool) {
+    function isFlight(
+        address airline,
+        string memory flight,
+        uint256 timestamp
+    ) external view returns (bool) {
         bytes32 key = getFlightKey(airline, flight, timestamp);
         return flights[key].isRegistered;
     }
@@ -214,7 +219,17 @@ contract FlightSuretyData {
      * @dev Buy insurance for a flight
      *
      */
-    function buy() external payable {}
+    function buy(
+        address airline,
+        string memory flight,
+        uint256 timestamp
+    ) external payable {
+    	bytes32 key = getFlightKey(airline, flight, timestamp);
+    	insurances[key].push(Insurance({passenger:msg.sender, price:msg.value}));
+
+    	uint256 funds = airlines[airline].funds;
+        airlines[airline].funds = funds.add(msg.value);
+    }
 
     /**
      *  @dev Credits payouts to insurees

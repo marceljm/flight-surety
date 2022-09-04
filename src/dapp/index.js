@@ -25,6 +25,22 @@ import './flightsurety.css';
             });
         })
 
+        DOM.elid('submit-purchase').addEventListener('click', () => {
+            let airlineAccount = DOM.elid('airlines').value;
+            let flightCode = DOM.elid('flights').value;
+            let timestamp = contract.timestamp;
+            let passengerAccount = DOM.elid('passengers').value;
+            let funds = DOM.elid('funds').value;
+
+            if (!passengerAccount || !airlineAccount || !flightCode || !funds || !timestamp)
+                return;
+
+            // Write transaction
+            contract.buy(airlineAccount, flightCode, timestamp, passengerAccount, funds, (error, result) => {
+                console.log(result);
+            });
+        })
+
         jQuery('#passengers').append(`<option value=""></option>`);
         for (let i = 0; i < 5; i++) {
             jQuery('#passengers').append(`<option value="${contract.passengers[i]}">${contract.passengersNames[i]}</option>`);

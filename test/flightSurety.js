@@ -2,7 +2,7 @@
 var Test = require('../config/testConfig.js');
 var BigNumber = require('bignumber.js');
 const Web3 = require("web3");
-const SKIP = false;
+const SKIP = true;
 
 contract('Flight Surety Tests', async (accounts) => {
 
@@ -228,4 +228,27 @@ contract('Flight Surety Tests', async (accounts) => {
         assert.equal(result, true, "Cannot register flight");
     });
 
+    it('(passenger) can buy issurance using buy()', async () => {
+        let airline = accounts[1];
+        let flight = 'ND1309';
+        let timestamp = Math.floor(Date.now() / 1000);
+        let passenger = accounts[12];
+        let price = web3.utils.toWei("1.0", "ether");
+        
+        let balancePassengerBeforeTransaction = await web3.eth.getBalance(passenger);
+        let balanceDataBeforeTransaction = await web3.eth.getBalance(config.flightSuretyData.address);
+        
+        try {
+            await config.flightSuretyData.buy(airline, flight, timestamp, { from: passenger, value: price });
+        }
+        catch (e) {
+            console.log(e);
+        }
+        
+        let balancePassengerAfterTransaction = await web3.eth.getBalance(passenger);
+        let balanceDataAfterTransaction = await web3.eth.getBalance(config.flightSuretyData.address);
+    
+        assert.isAbove(Number(balancePassengerBeforeTransaction), Number(balancePassengerAfterTransaction) + 1 * (new BigNumber(10)).pow(18));
+        assert.equal(Web3.utils.fromWei(String(Number(balanceDataAfterTransaction) - Number(balanceDataBeforeTransaction)), 'ether'), 1);
+    });
 });

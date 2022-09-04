@@ -1,7 +1,7 @@
 
 var Test = require('../config/testConfig.js');
 //var BigNumber = require('bignumber.js');
-const SKIP = false;
+const SKIP = true;
 
 contract('Oracles', async (accounts) => {
 
