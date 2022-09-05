@@ -123,6 +123,11 @@ contract FlightSuretyData {
         _;
     }
 
+    modifier requirePriceLimit(uint256 value) {
+        require(value <= 10**18, "Passengers may pay up to 1 ether for purchasing flight insurance.");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -223,7 +228,7 @@ contract FlightSuretyData {
         address airline,
         string memory flight,
         uint256 timestamp
-    ) external payable {
+    ) external payable requirePriceLimit(msg.value) {
     	bytes32 key = getFlightKey(airline, flight, timestamp);
     	insurances[key].push(Insurance({passenger:msg.sender, price:msg.value}));
 

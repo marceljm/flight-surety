@@ -96,9 +96,13 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 > Ability to purchase flight insurance for no more than 1 ether
 
+:white_check_mark:
+
 ### Passenger Payment
 
 > Passengers may pay up to 1 ether for purchasing flight insurance.
+
+:white_check_mark:
 
 ### Passenger Repayment
 
@@ -117,6 +121,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 ### Functioning Oracle
 
 > Oracle functionality is implemented in the server app.
+
+:white_check_mark:
 
 ### Oracle Initialization
 
