@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
+const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
 
 module.exports = {
     entry: [
@@ -27,6 +28,7 @@ module.exports = {
                 "BUILD_TARGET": JSON.stringify('server')
             }
         }),
+        new RunScriptWebpackPlugin({ name: 'server.js', autoRestart: false }),
     ],
     output: {
         path: path.join(__dirname, 'prod/server'),
@@ -34,5 +36,5 @@ module.exports = {
     },
     optimization: {
         moduleIds: 'named'
-     }
+    }
 }

@@ -33,6 +33,7 @@
     "html-loader": "latest",
     "html-webpack-plugin": "latest",
     "openzeppelin-solidity": "latest",
+    "run-script-webpack-plugin": "^0.1.1",
     "style-loader": "latest",
     "superstatic": "latest",
     "truffle": "latest",
