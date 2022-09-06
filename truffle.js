@@ -11,8 +11,8 @@ module.exports = {
             gas: 9999999,
         },
         develop: {
-            accounts: 21,
-            defaultEtherBalance: 500,
+            accounts: 60,
+            defaultEtherBalance: 150,
             blockTime: 3
         }
     },

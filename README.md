@@ -128,6 +128,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 > Upon startup, 20+ oracles are registered and their assigned indexes are persisted in memory
 
+:white_check_mark:
+
 ### Oracle Updates
 
 > Update flight status requests from client Dapp result in OracleRequest event emitted by Smart Contract that is captured by server (displays on console and handled in code)
