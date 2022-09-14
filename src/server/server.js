@@ -36,8 +36,9 @@ module.exports={app}
 web3.eth.getAccounts((error, accounts) => {
     flightSuretyApp.methods.REGISTRATION_FEE().call((error, fee) => {
         for (let i = 11; i < accounts.length; i++) {
-            // console.log(i, accounts[i]);
+            console.log(i, accounts[i], fee);
             flightSuretyApp.methods.registerOracle().send({ from: accounts[i], value: fee, gas: 999999 }, (error, result) => {
+                ;
                 flightSuretyApp.methods.getMyIndexes().call({ from: accounts[i] }, (error, index) => {
                     console.log(i-10, `\tOracle Registered: ${index[0]}, ${index[1]}, ${index[2]}`);
                 });
