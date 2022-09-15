@@ -28,7 +28,9 @@ app.get('/api', (req, res) => {
 
 app.post('/submit-oracle-responses', cors(), (req, res) => {
     web3.eth.getAccounts((error, accounts) => {
-        for (let i = 11; i < accounts.length; i++) {
+        let numberAccounts = accounts.length;
+        numberAccounts = 15;// REMOVE ME
+        for (let i = 11; i < numberAccounts; i++) {
             flightSuretyApp.methods.getMyIndexes().call({ from: accounts[i] }, (error, index) => {
                 console.log(`${index[0]}, ${index[1]}, ${index[2]}`);
             });
@@ -48,11 +50,17 @@ module.exports={app}
 // accounts [6,10]: passengers
 // accounts [11,]: oracles
 
-web3.eth.getAccounts((error, accounts) => {
-    flightSuretyApp.methods.REGISTRATION_FEE().call((error, fee) => {
-        for (let i = 11; i < accounts.length; i++) {
-            console.log(i, accounts[i], fee);
-            flightSuretyApp.methods.registerOracle().send({ from: accounts[i], value: fee, gas: "999999" }, (error, result) => {});
+web3.eth.getAccounts(async (error, accounts) => {
+    flightSuretyApp.methods.REGISTRATION_FEE().call(async (error, fee) => {
+        let numberAccounts = accounts.length;
+        numberAccounts = 15;// REMOVE ME
+        for (let i = 11; i < numberAccounts; i++) {
+            try {
+                console.log(i, accounts[i], fee);
+                await flightSuretyApp.methods.registerOracle().send({ from: accounts[i], value: fee, gas: "999999" });
+            } catch (e) {
+                console.log(e);
+            }
         }
     });
 });
