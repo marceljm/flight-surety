@@ -4,7 +4,7 @@ import Contract from './contract';
 import './flightsurety.css';
 
 
-(async() => {
+(async () => {
 
     let result = null;
 
@@ -12,16 +12,22 @@ import './flightsurety.css';
 
         // Read transaction
         contract.isOperational((error, result) => {
-            display('Operational Status', 'Check if contract is operational', [ { label: 'Operational Status', error: error, value: result} ]);
+            if (result)
+                jQuery('#operational').text('Operational');
+            else
+                jQuery('#operational').text('NOT operational');
         });
-    
+
 
         // User-submitted transaction
         DOM.elid('submit-oracle').addEventListener('click', () => {
-            let flight = DOM.elid('flight-number').value;
+            let airlineAccount = DOM.elid('airlines-oracle').value;
+            let flight = DOM.elid('flights-oracle').value;
             // Write transaction
-            contract.fetchFlightStatus(flight, (error, result) => {
-                display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
+            contract.fetchFlightStatus(airlineAccount, flight, (error, result) => {
+                console.log(result);
+                jQuery.post("http://localhost:3000/submit-oracle-responses");
+                // display('Oracles', 'Trigger oracles', [{ label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp }]);
             });
         })
 
@@ -51,7 +57,7 @@ import './flightsurety.css';
             jQuery('#airlines').append(`<option value="${contract.airlines[i]}">${contract.airlinesNames[i]}</option>`);
         }
 
-        jQuery('#airlines').on('change', function() {
+        jQuery('#airlines').on('change', function () {
             let airline = jQuery('#airlines :selected').text();
             jQuery('#flights').empty();
             for (const flight of contract.airlineFlight[airline]) {
@@ -60,7 +66,22 @@ import './flightsurety.css';
                 jQuery('#flights').append(`<option value="${code}">${city} (${code})</option>`);
             }
         });
-    });    
+
+        jQuery('#airlines-oracle').append(`<option value=""></option>`);
+        for (let i = 0; i < 5; i++) {
+            jQuery('#airlines-oracle').append(`<option value="${contract.airlines[i]}">${contract.airlinesNames[i]}</option>`);
+        }
+
+        jQuery('#airlines-oracle').on('change', function () {
+            let airline = jQuery('#airlines-oracle :selected').text();
+            jQuery('#flights-oracle').empty();
+            for (const flight of contract.airlineFlight[airline]) {
+                let city = flight[0];
+                let code = flight[1];
+                jQuery('#flights-oracle').append(`<option value="${code}">${city} (${code})</option>`);
+            }
+        });
+    });
 
 })();
 
@@ -71,9 +92,9 @@ function display(title, description, results) {
     section.appendChild(DOM.h2(title));
     section.appendChild(DOM.h5(description));
     results.map((result) => {
-        let row = section.appendChild(DOM.div({className:'row'}));
-        row.appendChild(DOM.div({className: 'col-sm-4 field'}, result.label));
-        row.appendChild(DOM.div({className: 'col-sm-8 field-value'}, result.error ? String(result.error) : String(result.value)));
+        let row = section.appendChild(DOM.div({ className: 'row' }));
+        row.appendChild(DOM.div({ className: 'col-sm-4 field' }, result.label));
+        row.appendChild(DOM.div({ className: 'col-sm-8 field-value' }, result.error ? String(result.error) : String(result.value)));
         section.appendChild(row);
     })
     displayDiv.append(section);

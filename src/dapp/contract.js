@@ -17,7 +17,7 @@ export default class Contract {
         this.flights = [{ "Atlanta": "ATL" }, { "Dallas": "DFW" }, { "Denver": "DEN" }, { "Chicago": "ORD" }, { "Los Angeles": "LAX" }, { "Charlotte": "CLT" }, { "Orlando": "MCO" }, { "Baiyun": "CAN" }, { "Shuangliu": "CTU" }, { "Las Vegas": "LAS" }, { "Phoenix": "PHX" }, { "Miami-Dade County": "MIA" }, { "Delhi": "DEL" }, { "Arnavutköy": "IST" }, { "Bao'an": "SZX" }, { "SeaTac": "SEA" }, { "Venustiano Carranza": "MEX" }, { "Yubei": "CKG" }, { "Changning": "SHA" }, { "Chaoyang": "PEK" }, { "Guandu": "KMG" }, { "Pudong": "PVG" }, { "Houston": "IAH" }, { "Khimki": "SVO" }, { "Queens": "JFK" }, { "Weicheng": "XIY" }, { "Garhoud": "DXB" }, { "Newark": "EWR" }, { "Xiaoshan": "HGH" }, { "Broward County": "FLL" }, { "Roissy-en-France": "CDG" }, { "Ōta": "HND" }, { "Jeju City": "CJU" }, { "Haarlemmermeer": "AMS" }, { "Domodedovo": "DME" }, { "Daxing District": "PKX" }, { "Pendik": "SAW" }, { "Frankfurt": "FRA" }, { "St. Paul": "MSP" }, { "San Mateo County": "SFO" }, { "Guarulhos": "GRU" }, { "Madrid": "MAD" }, { "Detroit": "DTW" }, { "East Boston": "BOS" }, { "Gangseo District": "GMP" }, { "Cancún": "CUN" }, { "Salt Lake City": "SLC" }, { "Antalya": "AYT" }, { "Changsha": "CSX" }, { "Wuhan": "WUH" }];
         this.airlineFlight = {};
         this.passengersNames = ['Elon Musk', 'Jeff Bezos', 'Bernard Arnault', 'Bill Gates', 'Warren Buffett'];
-        this.timestamp = null;
+        this.timestamp = Math.floor(Date.now() / 1000);
     }
 
     initialize(callback) {
@@ -43,15 +43,12 @@ export default class Contract {
                     for (let i = 0; i < this.flights.length; i++) {
                         // "random" distribution of flights among the airlines
                         if (i % (counter + 1) == 0) {
-                            let timestamp = Math.floor(Date.now() / 1000);
-                            this.timestamp = timestamp;
-
                             let city = Object.keys(this.flights[i])[0];
                             let airportCode = Object.values(this.flights[i])[0];
                             let flightCode = `${airportCode}`;
                             console.log(`Flight: ${city} (${flightCode})`);
 
-                            this.flightSuretyApp.methods.registerFlight(airline, flightCode, timestamp);
+                            this.flightSuretyApp.methods.registerFlight(airline, flightCode, this.timestamp);
                             this.airlineFlight[name].push([city, flightCode]);
                         }
                     }
@@ -78,12 +75,12 @@ export default class Contract {
             .call({ from: self.owner }, callback);
     }
 
-    fetchFlightStatus(flight, callback) {
+    fetchFlightStatus(airlineAccount, flight, callback) {
         let self = this;
         let payload = {
-            airline: self.airlines[0],
+            airline: airlineAccount,
             flight: flight,
-            timestamp: Math.floor(Date.now() / 1000)
+            timestamp: this.timestamp
         }
         self.flightSuretyApp.methods
             .fetchFlightStatus(payload.airline, payload.flight, payload.timestamp)
