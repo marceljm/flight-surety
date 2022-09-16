@@ -9,13 +9,22 @@ let config = Config['localhost'];
 let web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
 web3.eth.defaultAccount = web3.eth.accounts[0];
 let flightSuretyApp = new web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
-
+let flightStatus = 0;
 
 flightSuretyApp.events.OracleRequest({
     fromBlock: 0
 }, function (error, event) {
-    if (error) console.log(error)
-    // console.log(event)
+    if (error)
+        console.log(error);
+});
+
+flightSuretyApp.events.FlightStatusInfo({
+    fromBlock: 0
+}, function (error, event) {
+    if (error)
+        console.log(error);
+    else
+        flightStatus = event.returnValues['status'];
 });
 
 const app = express();
@@ -35,27 +44,37 @@ app.post('/submit-oracle-responses', cors(), (req, res) => {
     timestamp = req.body['timestamp'];
     console.log(airline, flight, timestamp);
 
+    flightStatus = 0;
+
     web3.eth.getAccounts(async (error, accounts) => {
         let numberAccounts = accounts.length;
-        numberAccounts = 13;// REMOVE ME
+        numberAccounts = 15;// REMOVE ME
         for (let i = 11; i < numberAccounts; i++) {
+            let status = getRandomInt(5) * 10;
             let oracleIndexes = await flightSuretyApp.methods.getMyIndexes().call({ from: accounts[i] });
-            console.log(i, oracleIndexes);
+            console.log(i, oracleIndexes, status);
 
-            //     for (let idx = 0; idx < 3; idx++) {
-            //         try {
-            //             // await config.flightSuretyApp.submitOracleResponse(oracleIndexes[idx], config.firstAirline, flight, timestamp, STATUS_CODE_ON_TIME, { from: accounts[a] });
-            //             // console.log('\nOK');
-            //         }
-            //         catch (e) {
-            //             // console.log('\nError', idx, oracleIndexes[idx].toNumber(), flight, timestamp);
-            //         }
-            //     }            
+            for (let idx = 0; idx < 3; idx++) {
+                try {
+                    let confirmedStatus = await flightSuretyApp.methods.submitOracleResponse(oracleIndexes[idx], airline, flight, timestamp, status).send({ from: accounts[i], gas: "999999" });
+                    if (flightStatus > 0) {
+                        console.log('OK', flightStatus);
+                        res.send({
+                            status: flightStatus
+                        })                        
+                        return;
+                    }
+                    console.log('OK');
+                }
+                catch (e) {
+                    console.log('Error');
+                }
+            }
         }
+        res.send({
+            status: flightStatus
+        });
     });
-    res.send({
-        message: 'An API for use with your Dapp!'
-    })
 })
 
 app.listen(3000, () => console.log('Server running on port 3000!'))
@@ -70,7 +89,7 @@ module.exports = { app }
 web3.eth.getAccounts(async (error, accounts) => {
     flightSuretyApp.methods.REGISTRATION_FEE().call(async (error, fee) => {
         let numberAccounts = accounts.length;
-        numberAccounts = 13;// REMOVE ME
+        numberAccounts = 15;// REMOVE ME
         for (let i = 11; i < numberAccounts; i++) {
             try {
                 console.log(i, accounts[i], fee);
@@ -81,3 +100,7 @@ web3.eth.getAccounts(async (error, accounts) => {
         }
     });
 });
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max) + 1;
+}

@@ -18,6 +18,7 @@ export default class Contract {
         this.airlineFlight = {};
         this.passengersNames = ['Elon Musk', 'Jeff Bezos', 'Bernard Arnault', 'Bill Gates', 'Warren Buffett'];
         this.timestamp = Math.floor(Date.now() / 1000);
+        this.statusMap = {"0": "Unknown", "10": "On time", "20": "Late: airline", "30": "Late: weather", "40": "Late: technical", "50": "Late: other"};
     }
 
     initialize(callback) {
@@ -93,10 +94,12 @@ export default class Contract {
                     },
                     body: body
                 });
-                // if (res.ok) {
-                //     const data = await res.json();
-                //     console.log(data);
-                // }
+                if (res.ok) {
+                    const data = await res.json();
+                    let status = data['status'];
+                    payload['status'] = self.statusMap[status];
+                    console.log(status);
+                }
                 callback(error, payload);
             });
     }

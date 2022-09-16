@@ -18,14 +18,19 @@ import './flightsurety.css';
                 jQuery('#operational').text('NOT operational');
         });
 
-
         // User-submitted transaction
         DOM.elid('submit-oracle').addEventListener('click', () => {
             let airlineAccount = DOM.elid('airlines-oracle').value;
             let flight = DOM.elid('flights-oracle').value;
+            jQuery('#spinner').show();
+            jQuery('#flight-status').hide();
+            jQuery('#flight-status').text('');
             // Write transaction
             contract.fetchFlightStatus(airlineAccount, flight, (error, result) => {
                 console.log(result);
+                jQuery('#spinner').hide();
+                jQuery('#flight-status').show();
+                jQuery('#flight-status').text(result['status']);
                 // display('Oracles', 'Trigger oracles', [{ label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp }]);
             });
         })
