@@ -59,5 +59,8 @@ module.exports = {
             directory: path.join(__dirname, "dapp/")
         },
         port: 8000
+    },
+    experiments: {
+        topLevelAwait: true
     }
 };

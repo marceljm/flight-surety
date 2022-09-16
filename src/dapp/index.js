@@ -26,7 +26,6 @@ import './flightsurety.css';
             // Write transaction
             contract.fetchFlightStatus(airlineAccount, flight, (error, result) => {
                 console.log(result);
-                jQuery.post("http://localhost:3000/submit-oracle-responses");
                 // display('Oracles', 'Trigger oracles', [{ label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp }]);
             });
         })

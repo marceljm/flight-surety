@@ -84,7 +84,19 @@ export default class Contract {
         }
         self.flightSuretyApp.methods
             .fetchFlightStatus(payload.airline, payload.flight, payload.timestamp)
-            .send({ from: self.owner }, (error, result) => {
+            .send({ from: self.owner }, async (error, result) => {
+                const body = JSON.stringify({ 'airline': airlineAccount, 'flight': flight, 'timestamp': this.timestamp });
+                const res = await fetch('http://localhost:3000/submit-oracle-responses', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: body
+                });
+                // if (res.ok) {
+                //     const data = await res.json();
+                //     console.log(data);
+                // }
                 callback(error, payload);
             });
     }

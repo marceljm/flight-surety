@@ -2,6 +2,7 @@ const FlightSuretyApp = require('../../build/contracts/FlightSuretyApp.json');
 const Config = require('./config.json');
 var Web3 = require("web3");
 const express = require('express')
+const bodyParser = require('body-parser');
 
 
 let config = Config['localhost'];
@@ -19,6 +20,8 @@ flightSuretyApp.events.OracleRequest({
 
 const app = express();
 var cors = require('cors');
+app.use(cors({ origin: "http://localhost:8000", optionsSuccessStatus: 200 }));
+app.use(express.json());
 
 app.get('/api', (req, res) => {
     res.send({
@@ -27,13 +30,27 @@ app.get('/api', (req, res) => {
 })
 
 app.post('/submit-oracle-responses', cors(), (req, res) => {
-    web3.eth.getAccounts((error, accounts) => {
+    airline = req.body['airline'];
+    flight = req.body['flight'];
+    timestamp = req.body['timestamp'];
+    console.log(airline, flight, timestamp);
+
+    web3.eth.getAccounts(async (error, accounts) => {
         let numberAccounts = accounts.length;
-        numberAccounts = 15;// REMOVE ME
+        numberAccounts = 13;// REMOVE ME
         for (let i = 11; i < numberAccounts; i++) {
-            flightSuretyApp.methods.getMyIndexes().call({ from: accounts[i] }, (error, index) => {
-                console.log(`${index[0]}, ${index[1]}, ${index[2]}`);
-            });
+            let oracleIndexes = await flightSuretyApp.methods.getMyIndexes().call({ from: accounts[i] });
+            console.log(i, oracleIndexes);
+
+            //     for (let idx = 0; idx < 3; idx++) {
+            //         try {
+            //             // await config.flightSuretyApp.submitOracleResponse(oracleIndexes[idx], config.firstAirline, flight, timestamp, STATUS_CODE_ON_TIME, { from: accounts[a] });
+            //             // console.log('\nOK');
+            //         }
+            //         catch (e) {
+            //             // console.log('\nError', idx, oracleIndexes[idx].toNumber(), flight, timestamp);
+            //         }
+            //     }            
         }
     });
     res.send({
@@ -43,7 +60,7 @@ app.post('/submit-oracle-responses', cors(), (req, res) => {
 
 app.listen(3000, () => console.log('Server running on port 3000!'))
 
-module.exports={app}
+module.exports = { app }
 
 // account [0]: contract owner
 // accounts [1,5]: airlines
@@ -53,7 +70,7 @@ module.exports={app}
 web3.eth.getAccounts(async (error, accounts) => {
     flightSuretyApp.methods.REGISTRATION_FEE().call(async (error, fee) => {
         let numberAccounts = accounts.length;
-        numberAccounts = 15;// REMOVE ME
+        numberAccounts = 13;// REMOVE ME
         for (let i = 11; i < numberAccounts; i++) {
             try {
                 console.log(i, accounts[i], fee);
