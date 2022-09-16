@@ -32,6 +32,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 > 2) Trigger contract to request flight status update
 
+:white_check_mark:
+
 ### Oracle Server Application
 
 > A server app has been created for simulating oracle behavior. Server can be launched with “npm run server”
@@ -134,11 +136,13 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 > Update flight status requests from client Dapp result in OracleRequest event emitted by Smart Contract that is captured by server (displays on console and handled in code)
 
+:white_check_mark:
+
 ### Oracle Functionality
 
 > Server will loop through all registered oracles, identify those oracles for which the OracleRequest event applies, and respond by calling into FlightSuretyApp contract with random status code of Unknown (0), On Time (10) or Late Airline (20), Late Weather (30), Late Technical (40), or Late Other (50)
 
-
+:white_check_mark:
 
 
 # #######################################

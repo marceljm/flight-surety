@@ -112,7 +112,6 @@ export default class Contract {
         self.flightSuretyData.methods
             .buy(airlineAccount, flightCode, timestamp)
             .send({ from: passengerAccount, value: fundsWei, gas: 999999 }, (error, result) => {
-                console.log(error);
                 console.log(result);
             });
     }

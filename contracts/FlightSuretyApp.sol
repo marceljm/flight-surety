@@ -156,7 +156,7 @@ contract FlightSuretyApp {
     uint256 public constant REGISTRATION_FEE = 1 ether;
 
     // Number of oracles that must respond for valid status
-    uint256 private constant MIN_RESPONSES = 1;
+    uint256 private constant MIN_RESPONSES = 3;
 
     struct Oracle {
         bool isRegistered;
