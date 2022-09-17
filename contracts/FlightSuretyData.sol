@@ -142,18 +142,18 @@ contract FlightSuretyData {
         _;
     }
 
-    modifier requireStatus(uint8 status) {
-        require(
-            status == STATUS_CODE_LATE_AIRLINE,
-            "Flight should be delayed due to airline fault"
-        );
-        _;
-    }
-
     modifier requireNotProcessed(Insurance memory insurance) {
         require(
             !insurance.processed,
             "Insurance already processed before"
+        );
+        _; 
+    }
+
+    modifier requireCredits(address passenger) {
+        require(
+            passengerCredits[passenger] > 0,
+            "Passenger has no credits"
         );
         _; 
     }
@@ -281,12 +281,16 @@ contract FlightSuretyData {
         string memory flight,
         uint256 timestamp,
         uint8 statusCode
-    ) external requireStatus(statusCode) {
+    ) external {
+        if (statusCode != STATUS_CODE_LATE_AIRLINE)
+            return;
+
         bytes32 key = getFlightKey(airline, flight, timestamp);
         Insurance[] memory flightInsurances = insurances[key];
         uint8 i = 0;
         while (i < flightInsurances.length) {
             creditInsurees(flightInsurances[i], airline);
+            insurances[key][i].processed = true;
             i++;
         }
     }
@@ -306,10 +310,15 @@ contract FlightSuretyData {
      *  @dev Transfers eligible payout funds to insuree
      *
      */
-    function pay(address passenger) external {
-        uint256 credits = passengerCredits[passenger];
+    function pay(address payable passenger, uint256 value) external payable requireCredits(passenger) {
         passengerCredits[passenger] = 0;
-        payable(passenger).transfer(credits);
+        passenger.transfer(value);
+    }
+    
+    function getInsuranceBalance(
+        address passenger
+    ) external view returns (uint256) {
+        return passengerCredits[passenger];
     }
 
     /**

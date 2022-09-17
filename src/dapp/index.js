@@ -51,6 +51,18 @@ import './flightsurety.css';
             });
         })
 
+        DOM.elid('submit-withdraw').addEventListener('click', () => {
+            let passengerAccount = DOM.elid('passengers-withdraw').value;
+
+            if (!passengerAccount)
+                return;
+
+            // Write transaction
+            contract.pay(passengerAccount, (error, result) => {
+                console.log(result);
+            });
+        })
+
         jQuery('#passengers').append(`<option value=""></option>`);
         for (let i = 0; i < 5; i++) {
             jQuery('#passengers').append(`<option value="${contract.passengers[i]}">${contract.passengersNames[i]}</option>`);
@@ -85,6 +97,11 @@ import './flightsurety.css';
                 jQuery('#flights-oracle').append(`<option value="${code}">${city} (${code})</option>`);
             }
         });
+
+        jQuery('#passengers-withdraw').append(`<option value=""></option>`);
+        for (let i = 0; i < 5; i++) {
+            jQuery('#passengers-withdraw').append(`<option value="${contract.passengers[i]}">${contract.passengersNames[i]}</option>`);
+        }
     });
 
 })();

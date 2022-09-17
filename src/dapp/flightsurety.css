@@ -5,11 +5,11 @@ body {
 }
 
 .container {
-    margin-top: 150px;
+    margin-top: 80px;
     background-color: #000;
     opacity: 0.85;
     color: #fff;
-    padding: 40px;
+    padding: 20px;
 }
 
 .top-20 {

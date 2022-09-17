@@ -18,11 +18,11 @@ export default class Contract {
         this.airlineFlight = {};
         this.passengersNames = ['Elon Musk', 'Jeff Bezos', 'Bernard Arnault', 'Bill Gates', 'Warren Buffett'];
         this.timestamp = Math.floor(Date.now() / 1000);
-        this.statusMap = {"0": "Unknown", "10": "On time", "20": "Late: airline", "30": "Late: weather", "40": "Late: technical", "50": "Late: other"};
+        this.statusMap = { "0": "Unknown", "10": "On time", "20": "Late: airline", "30": "Late: weather", "40": "Late: technical", "50": "Late: other" };
     }
 
     initialize(callback) {
-        this.web3.eth.getAccounts((error, accts) => {
+        this.web3.eth.getAccounts(async (error, accts) => {
 
             this.owner = accts[0];
 
@@ -36,7 +36,9 @@ export default class Contract {
 
                     // register airlines
                     this.airlines.push(airline);
-                    this.flightSuretyApp.methods.registerAirline(airline, name);
+                    await this.flightSuretyApp.methods.registerAirline(airline, name);
+                    await this.flightSuretyData.methods.fund().send({ from: airline, value: this.web3.utils.toWei("10", "ether") });
+
                     console.log(`\nAirline: ${name}`);
 
                     // register flights
@@ -49,7 +51,7 @@ export default class Contract {
                             let flightCode = `${airportCode}`;
                             console.log(`Flight: ${city} (${flightCode})`);
 
-                            this.flightSuretyApp.methods.registerFlight(airline, flightCode, this.timestamp);
+                            await this.flightSuretyApp.methods.registerFlight(airline, flightCode, this.timestamp);
                             this.airlineFlight[name].push([city, flightCode]);
                         }
                     }
@@ -114,5 +116,39 @@ export default class Contract {
             .send({ from: passengerAccount, value: fundsWei, gas: 999999 }, (error, result) => {
                 console.log(result);
             });
+    }
+
+    pay(passenger, callback) {
+        let self = this;
+
+        console.log('===============');
+
+        self.flightSuretyData.methods.getInsuranceBalance(passenger).call(async (error, result) => {
+            let credits = result;
+            console.log('Insurance balance:', self.web3.utils.fromWei(credits, "ether"), "ETH");
+            if (credits == 0)
+                return;
+
+            await self.web3.eth.getBalance(passenger, async (error, result) => {
+                console.log('Passenger balance before:\t', self.web3.utils.fromWei(result, "ether"), "ETH");
+            });
+
+            await self.web3.eth.getBalance(self.flightSuretyData._address, (error, result) => {
+                console.log('Contract balance before:\t', self.web3.utils.fromWei(result, "ether"), "ETH");
+            });
+
+            await self.flightSuretyData.methods
+                .pay(passenger, credits)
+                .send({from: passenger}, (error, result) => {
+                    console.log(result);
+                });
+
+            await self.web3.eth.getBalance(passenger, (error, result) => {
+                console.log('Passenger balance after:\t', self.web3.utils.fromWei(result, "ether"), "ETH");
+            });
+            await self.web3.eth.getBalance(self.flightSuretyData._address, (error, result) => {
+                console.log('Contract balance after:\t', self.web3.utils.fromWei(result, "ether"), "ETH");
+            });
+        });
     }
 }

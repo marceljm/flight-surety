@@ -136,9 +136,10 @@ contract FlightSuretyApp {
      *
      */
     function pay(
-        address passenger
-    ) external {
-        flightSuretyData.pay(passenger);
+        address payable passenger,
+        uint256 value
+    ) external payable {
+        flightSuretyData.pay(passenger, value);
     }
 
     // Generate a request for oracles to fetch flight information
@@ -357,6 +358,7 @@ abstract contract FlightSuretyData {
     ) external virtual;
 
     function pay(
-        address passenger
-    ) external virtual;
+        address payable passenger,
+        uint256 value
+    ) external payable virtual;
 }

@@ -50,13 +50,13 @@ app.post('/submit-oracle-responses', cors(), (req, res) => {
         let numberAccounts = accounts.length;
         numberAccounts = 16;// REMOVE ME
         for (let i = 11; i < numberAccounts; i++) {
-            let status = getRandomInt(5) * 10;
+            let status = 20;//getRandomInt(5) * 10;
             let oracleIndexes = await flightSuretyApp.methods.getMyIndexes().call({ from: accounts[i] });
             console.log(i, oracleIndexes, status);
 
             for (let idx = 0; idx < 3; idx++) {
                 try {
-                    let confirmedStatus = await flightSuretyApp.methods.submitOracleResponse(oracleIndexes[idx], airline, flight, timestamp, status).send({ from: accounts[i], gas: "999999" });
+                    await flightSuretyApp.methods.submitOracleResponse(oracleIndexes[idx], airline, flight, timestamp, status).send({ from: accounts[i], gas: "999999" });
                     if (flightStatus > 0) {
                         console.log('OK', flightStatus);
                         res.send({
