@@ -127,7 +127,9 @@ contract FlightSuretyApp {
         string memory flight,
         uint256 timestamp,
         uint8 statusCode
-    ) internal pure {}
+    ) external {
+        flightSuretyData.processFlightStatus(airline, flight, timestamp, statusCode);
+    }
 
     // Generate a request for oracles to fetch flight information
     function fetchFlightStatus(
@@ -156,7 +158,7 @@ contract FlightSuretyApp {
     uint256 public constant REGISTRATION_FEE = 1 ether;
 
     // Number of oracles that must respond for valid status
-    uint256 private constant MIN_RESPONSES = 3;
+    uint256 private constant MIN_RESPONSES = 1;
 
     struct Oracle {
         bool isRegistered;
@@ -260,7 +262,7 @@ contract FlightSuretyApp {
             emit FlightStatusInfo(airline, flight, timestamp, statusCode);
 
             // Handle flight status as appropriate
-            processFlightStatus(airline, flight, timestamp, statusCode);
+            flightSuretyData.processFlightStatus(airline, flight, timestamp, statusCode);
         }
     }
 
@@ -335,5 +337,12 @@ abstract contract FlightSuretyData {
         address airline,
         string memory flight,
         uint256 timestamp
+    ) external virtual;
+
+    function processFlightStatus(
+        address airline,
+        string memory flight,
+        uint256 timestamp,
+        uint8 statusCode
     ) external virtual;
 }

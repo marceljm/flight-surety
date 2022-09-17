@@ -6,6 +6,13 @@ import "../node_modules/openzeppelin-solidity/contracts/utils/math/SafeMath.sol"
 contract FlightSuretyData {
     using SafeMath for uint256;
 
+    uint8 private constant STATUS_CODE_UNKNOWN = 0;
+    uint8 private constant STATUS_CODE_ON_TIME = 10;
+    uint8 private constant STATUS_CODE_LATE_AIRLINE = 20;
+    uint8 private constant STATUS_CODE_LATE_WEATHER = 30;
+    uint8 private constant STATUS_CODE_LATE_TECHNICAL = 40;
+    uint8 private constant STATUS_CODE_LATE_OTHER = 50;
+
     /********************************************************************************************/
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
@@ -38,10 +45,14 @@ contract FlightSuretyData {
     struct Insurance {
         address passenger;
         uint256 price;
+        bool processed;
     }
 
     // flight key => array of insurances
     mapping(bytes32 => Insurance[]) private insurances;
+
+    // credit
+    mapping(address => uint256) private passengerCredits;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -124,8 +135,27 @@ contract FlightSuretyData {
     }
 
     modifier requirePriceLimit(uint256 value) {
-        require(value <= 10**18, "Passengers may pay up to 1 ether for purchasing flight insurance.");
+        require(
+            value <= 10**18,
+            "Passengers may pay up to 1 ether for purchasing flight insurance."
+        );
         _;
+    }
+
+    modifier requireStatus(uint8 status) {
+        require(
+            status == STATUS_CODE_LATE_AIRLINE,
+            "Flight should be delayed due to airline fault"
+        );
+        _;
+    }
+
+    modifier requireNotProcessed(Insurance memory insurance) {
+        require(
+            !insurance.processed,
+            "Insurance already processed before"
+        );
+        _; 
     }
 
     /********************************************************************************************/
@@ -229,17 +259,48 @@ contract FlightSuretyData {
         string memory flight,
         uint256 timestamp
     ) external payable requirePriceLimit(msg.value) {
-    	bytes32 key = getFlightKey(airline, flight, timestamp);
-    	insurances[key].push(Insurance({passenger:msg.sender, price:msg.value}));
+        bytes32 key = getFlightKey(airline, flight, timestamp);
+        insurances[key].push(
+            Insurance({
+                passenger: msg.sender,
+                price: msg.value,
+                processed: false
+            })
+        );
 
-    	uint256 funds = airlines[airline].funds;
+        uint256 funds = airlines[airline].funds;
         airlines[airline].funds = funds.add(msg.value);
+    }
+
+    /**
+     * @dev Process insurance for a flight
+     *
+     */
+    function processFlightStatus(
+        address airline,
+        string memory flight,
+        uint256 timestamp,
+        uint8 statusCode
+    ) external requireStatus(statusCode) {
+        bytes32 key = getFlightKey(airline, flight, timestamp);
+        Insurance[] memory flightInsurances = insurances[key];
+        uint8 i = 0;
+        while (i < flightInsurances.length) {
+            creditInsurees(flightInsurances[i], airline);
+            i++;
+        }
     }
 
     /**
      *  @dev Credits payouts to insurees
      */
-    function creditInsurees() external pure {}
+    function creditInsurees(Insurance memory insurance, address airline) private requireNotProcessed(insurance) {
+        uint256 value = SafeMath.div(SafeMath.mul(insurance.price, 3), 2);
+        uint256 airlineBalance = airlines[airline].funds;
+        uint256 passengerBalance = passengerCredits[insurance.passenger];
+        airlines[airline].funds = airlineBalance.sub(value);
+        passengerCredits[insurance.passenger] = passengerBalance.add(value);
+    }
 
     /**
      *  @dev Transfers eligible payout funds to insuree

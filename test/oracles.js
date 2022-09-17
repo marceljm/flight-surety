@@ -1,7 +1,7 @@
 
 var Test = require('../config/testConfig.js');
 //var BigNumber = require('bignumber.js');
-const SKIP = false;
+const SKIP = true;
 
 contract('Oracles', async (accounts) => {
 
@@ -20,10 +20,9 @@ contract('Oracles', async (accounts) => {
         config = await Test.Config(accounts);
     });
 
-    if (SKIP)
-        return;
-
     it('can register oracles', async () => {
+        if (SKIP)
+            return;
 
         // ARRANGE
         let fee = await config.flightSuretyApp.REGISTRATION_FEE.call();
@@ -38,6 +37,8 @@ contract('Oracles', async (accounts) => {
     });
 
     it('can request flight status', async () => {
+        if (SKIP)
+            return;
 
         // ARRANGE
         let flight = 'ND1309'; // Course number
@@ -74,6 +75,23 @@ contract('Oracles', async (accounts) => {
 
     });
 
-
+    it('can process flight status', async () => {
+        let airline = accounts[1];
+        let flight = 'ND1309';
+        let timestamp = Math.floor(Date.now() / 1000);
+        let passenger = accounts[12];
+        let price = web3.utils.toWei("1.0", "ether");
+        try {
+            // airline: add funds
+            await config.flightSuretyData.fund({ from: airline, value: web3.utils.toWei("10", "ether") });
+            // passenger: buy insurance
+            await config.flightSuretyData.buy(airline, flight, timestamp, { from: passenger, value: price });
+            // flight: delayed
+            await config.flightSuretyApp.processFlightStatus(airline, flight, timestamp, STATUS_CODE_LATE_AIRLINE);
+        }
+        catch (e) {
+            console.log(e);
+        }
+    });
 
 });
