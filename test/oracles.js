@@ -1,6 +1,7 @@
 
 var Test = require('../config/testConfig.js');
-//var BigNumber = require('bignumber.js');
+var BigNumber = require('bignumber.js');
+const Web3 = require("web3");
 const SKIP = true;
 
 contract('Oracles', async (accounts) => {
@@ -85,9 +86,15 @@ contract('Oracles', async (accounts) => {
             // airline: add funds
             await config.flightSuretyData.fund({ from: airline, value: web3.utils.toWei("10", "ether") });
             // passenger: buy insurance
-            await config.flightSuretyData.buy(airline, flight, timestamp, { from: passenger, value: price });
+            await config.flightSuretyData.buy(airline, flight, timestamp, { from: passenger, value: price });            
             // flight: delayed
             await config.flightSuretyApp.processFlightStatus(airline, flight, timestamp, STATUS_CODE_LATE_AIRLINE);
+            // withdraw
+            let balancePassengerBeforeTransaction = await web3.eth.getBalance(passenger);
+            await config.flightSuretyApp.pay(passenger);
+            let balancePassengerAfterTransaction = await web3.eth.getBalance(passenger);
+
+            assert.equal(Web3.utils.fromWei(String(Number(balancePassengerAfterTransaction) - Number(balancePassengerBeforeTransaction)), 'ether'), 1.5); // 1.0 * 1.5 = 1.5
         }
         catch (e) {
             console.log(e);

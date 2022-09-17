@@ -131,6 +131,16 @@ contract FlightSuretyApp {
         flightSuretyData.processFlightStatus(airline, flight, timestamp, statusCode);
     }
 
+    /**
+     * @dev Withdraw
+     *
+     */
+    function pay(
+        address passenger
+    ) external {
+        flightSuretyData.pay(passenger);
+    }
+
     // Generate a request for oracles to fetch flight information
     function fetchFlightStatus(
         address airline,
@@ -344,5 +354,9 @@ abstract contract FlightSuretyData {
         string memory flight,
         uint256 timestamp,
         uint8 statusCode
+    ) external virtual;
+
+    function pay(
+        address passenger
     ) external virtual;
 }

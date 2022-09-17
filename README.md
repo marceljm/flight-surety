@@ -110,6 +110,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 > If flight is delayed due to airline fault, passenger receives credit of 1.5X the amount they paid
 
+:white_check_mark:
+
 ### Passenger Withdraw
 
 > Passenger can withdraw any funds owed to them as a result of receiving credit for insurance payout
@@ -117,6 +119,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 ### Insurance Payouts
 
 > Insurance payouts are not sent directly to passenger’s wallet
+
+:white_check_mark:
 
 ## Oracles (Server App)
 

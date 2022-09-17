@@ -295,7 +295,7 @@ contract FlightSuretyData {
      *  @dev Credits payouts to insurees
      */
     function creditInsurees(Insurance memory insurance, address airline) private requireNotProcessed(insurance) {
-        uint256 value = SafeMath.div(SafeMath.mul(insurance.price, 3), 2);
+        uint256 value = insurance.price.mul(3).div(2);
         uint256 airlineBalance = airlines[airline].funds;
         uint256 passengerBalance = passengerCredits[insurance.passenger];
         airlines[airline].funds = airlineBalance.sub(value);
@@ -306,7 +306,11 @@ contract FlightSuretyData {
      *  @dev Transfers eligible payout funds to insuree
      *
      */
-    function pay() external pure {}
+    function pay(address passenger) external {
+        uint256 credits = passengerCredits[passenger];
+        passengerCredits[passenger] = 0;
+        payable(passenger).transfer(credits);
+    }
 
     /**
      * @dev Initial funding for the insurance. Unless there are too many delayed flights
