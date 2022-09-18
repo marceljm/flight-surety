@@ -199,7 +199,7 @@ Deploy the contents of the ./dapp folder
 
 ## Resources
 
-* [Calling smart contract functions using web3.js - call() vs send()](https://bitsofco.de/calling-smart-contract-functions-using-web3-js-call-vs-send/
+* [Calling smart contract functions using web3.js - call vs send](https://bitsofco.de/calling-smart-contract-functions-using-web3-js-call-vs-send/
 * [How does Ethereum work anyway?](https://medium.com/@preethikasireddy/how-does-ethereum-work-anyway-22d1df506369)
 * [BIP39 Mnemonic Generator](https://iancoleman.io/bip39/)
 * [Truffle Framework](http://truffleframework.com/)
