@@ -2,7 +2,7 @@
 var Test = require('../config/testConfig.js');
 var BigNumber = require('bignumber.js');
 const Web3 = require("web3");
-const SKIP = true;
+const SKIP = false;
 
 contract('Flight Surety Tests', async (accounts) => {
 

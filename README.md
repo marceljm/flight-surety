@@ -2,6 +2,8 @@
 
 FlightSurety is a sample application project for Udacity's Blockchain course.
 
+![Screenshot](https://github.com/marceljm/flight-surety/blob/main/screenshot.png)
+
 ## Separation of Concerns, Operational Control and “Fail Fast”
 
 ### Smart Contract Seperation
@@ -116,6 +118,8 @@ FlightSurety is a sample application project for Udacity's Blockchain course.
 
 > Passenger can withdraw any funds owed to them as a result of receiving credit for insurance payout
 
+:white_check_mark:
+
 ### Insurance Payouts
 
 > Insurance payouts are not sent directly to passenger’s wallet
@@ -158,7 +162,11 @@ This repository contains Smart Contract code in Solidity (using Truffle), tests 
 To install, download or clone the repo, then:
 
 `npm install`
-`truffle compile`
+`export NODE_OPTIONS=--openssl-legacy-provider`
+`truffle develop`
+`compile`
+`migrate --reset`
+`test`
 
 ## Develop Client
 
@@ -191,6 +199,7 @@ Deploy the contents of the ./dapp folder
 
 ## Resources
 
+* [Calling smart contract functions using web3.js - call() vs send()](https://bitsofco.de/calling-smart-contract-functions-using-web3-js-call-vs-send/
 * [How does Ethereum work anyway?](https://medium.com/@preethikasireddy/how-does-ethereum-work-anyway-22d1df506369)
 * [BIP39 Mnemonic Generator](https://iancoleman.io/bip39/)
 * [Truffle Framework](http://truffleframework.com/)

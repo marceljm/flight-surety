@@ -310,7 +310,8 @@ contract FlightSuretyData {
      *  @dev Transfers eligible payout funds to insuree
      *
      */
-    function pay(address payable passenger, uint256 value) external payable requireCredits(passenger) {
+    function pay(address payable passenger) external payable requireCredits(passenger) {
+        uint256 value = passengerCredits[passenger];
         passengerCredits[passenger] = 0;
         passenger.transfer(value);
     }

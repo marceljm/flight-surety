@@ -100,7 +100,7 @@ export default class Contract {
                     const data = await res.json();
                     let status = data['status'];
                     payload['status'] = self.statusMap[status];
-                    console.log(status);
+                    console.log('Status:', status);
                 }
                 callback(error, payload);
             });
@@ -138,7 +138,7 @@ export default class Contract {
             });
 
             await self.flightSuretyData.methods
-                .pay(passenger, credits)
+                .pay(passenger)
                 .send({from: passenger}, (error, result) => {
                     console.log(result);
                 });

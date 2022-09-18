@@ -136,10 +136,9 @@ contract FlightSuretyApp {
      *
      */
     function pay(
-        address payable passenger,
-        uint256 value
+        address payable passenger
     ) external payable {
-        flightSuretyData.pay(passenger, value);
+        flightSuretyData.pay(passenger);
     }
 
     // Generate a request for oracles to fetch flight information
@@ -169,7 +168,7 @@ contract FlightSuretyApp {
     uint256 public constant REGISTRATION_FEE = 1 ether;
 
     // Number of oracles that must respond for valid status
-    uint256 private constant MIN_RESPONSES = 1;
+    uint256 private constant MIN_RESPONSES = 3;
 
     struct Oracle {
         bool isRegistered;
@@ -358,7 +357,6 @@ abstract contract FlightSuretyData {
     ) external virtual;
 
     function pay(
-        address payable passenger,
-        uint256 value
+        address payable passenger
     ) external payable virtual;
 }

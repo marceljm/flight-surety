@@ -48,9 +48,8 @@ app.post('/submit-oracle-responses', cors(), (req, res) => {
 
     web3.eth.getAccounts(async (error, accounts) => {
         let numberAccounts = accounts.length;
-        numberAccounts = 16;// REMOVE ME
         for (let i = 11; i < numberAccounts; i++) {
-            let status = 20;//getRandomInt(5) * 10;
+            let status = getRandomInt(5) * 10;
             let oracleIndexes = await flightSuretyApp.methods.getMyIndexes().call({ from: accounts[i] });
             console.log(i, oracleIndexes, status);
 
@@ -89,7 +88,6 @@ module.exports = { app }
 web3.eth.getAccounts(async (error, accounts) => {
     flightSuretyApp.methods.REGISTRATION_FEE().call(async (error, fee) => {
         let numberAccounts = accounts.length;
-        numberAccounts = 16;// REMOVE ME
         for (let i = 11; i < numberAccounts; i++) {
             try {
                 console.log(i, accounts[i], fee);
